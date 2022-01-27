@@ -1,0 +1,147 @@
+<html>
+<head>
+	<title>ZRender Demo</title>
+	<script src="./node_modules/zrender/dist/zrender.js"></script>
+	<style>
+		#main {
+			width:100%;
+			height:100%;
+			max-height: 750px;
+		}
+	</style>
+</head>
+<body>
+	<div id="main" style="border:2px black solid"></div>
+	<div>
+		<input id="btn" type="button" value="Changed Size" />
+		<input id="btn-translate" type="button" value="Move towards south-east" />
+		<input id="btn-translate1" type="button" value="Move towards north-west" />
+		<input id="btn-translate2" type="button" value="Move towards east" />
+		<input id="btn-translate3" type="button" value="Move towards west" />
+	</div>
+
+	<script>
+		window.onload = function(e) {
+			var btn = document.getElementById('btn');
+			btn.addEventListener("click", function(e) {
+				circle.attr('shape', {
+				    r: 50 // 只更新 r。cx、cy 将保持不变。
+				});
+			});
+
+			btn = document.getElementById('btn-translate');
+			btn.addEventListener("click", function(e) {
+				group.animateTo({
+		         position: [group.position[0] + 10, group.position[1] + 10], // 每次移动（10px，10px）
+		        }, 100, 100)
+			});
+
+			btn = document.getElementById('btn-translate1');
+			btn.addEventListener("click", function(e) {
+				group.animateTo({
+		         position: [group.position[0] - 10, group.position[1] - 10], // 每次移动（-10px，-10px）
+		        }, 100, 100)
+			});
+
+			btn = document.getElementById('btn-translate2');
+			btn.addEventListener("click", function(e) {
+				group.animateTo({
+		         position: [group.position[0] + 10, group.position[1]], // 每次移动（+10px，0px）
+		        }, 100, 100)
+			});
+
+			btn = document.getElementById('btn-translate3');
+			btn.addEventListener("click", function(e) {
+				group.animateTo({
+		         position: [group.position[0] - 10, group.position[1]], // 每次移动（0px，-10px）
+		        }, 100, 100)
+			});
+
+			var zr = zrender.init(document.getElementById('main'));
+
+			// 实现画布整体缩放的代码
+			var scale =1.0; 
+		    zr.on('mousewheel',function(e){
+		        var storage =zr.storage;
+		        var els = zr.storage.getDisplayList(true,true);
+		        var delta = e.wheelDelta ;
+		        var newScale = scale + delta/10.0;
+
+		        if(newScale < 0.5 || newScale > 3){
+		            return;
+		        }
+		        scale = newScale;
+		        group.animateTo({
+		         scale: [scale, scale],
+		        }, 100, 100)
+
+		        zr.refresh();
+		    });
+		   	///////
+
+			var circle = new zrender.Circle({
+			   
+			   	draggable:true,
+			    shape: {
+			        cx: 150,
+			        cy: 50,
+			        r: 40
+			    },
+			    style: {
+			        fill: 'none',
+			        stroke: '#F00'
+			    },
+			    onmouseover : function(params) {console.log('catch you!')}   // 图元事件处理
+			});
+
+			var p2 = new zrender.Circle({
+		        position: [0, 0],
+		        "shape": {
+		            "cx": 300,
+		            "cy": 300,
+		            "r": 30
+		        },
+		        "style": {
+		            "lineWidth": 1,
+		            "textPosition": "inside"
+		        }
+		    });
+
+			p2.on("click", function(e) {   // 另一种绑定图元事件的方法
+				alert("you clicked me!");
+			}, {context: "eventContext"});
+
+		    var line =new zrender.Polyline({
+		        "style": {
+		            "stroke": "red",
+		            "lineWidth": 2
+		        },
+		        "shape": {
+		            "points": [
+		                [
+		                    200,
+		                    200
+		                ],
+		                [
+		                    300,
+		                    300
+		                ]
+		            ],
+		            "smooth": false,
+		            "smoothConstraint": null
+		        }
+		    });
+
+
+
+			var group = new zrender.Group({ position: [0, 0] });
+
+		    group.add(circle);
+		    group.add(p2);
+
+		    zr.add(group);
+			
+		}
+	</script>
+</body>
+</html>

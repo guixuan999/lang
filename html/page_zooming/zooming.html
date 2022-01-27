@@ -1,0 +1,73 @@
+<html>
+<head>
+	<title>Zooming Demo	</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script>
+	window.addEventListener("load", function() {
+		var btn = document.getElementById('zoom');
+		btn.addEventListener("click", function(e) {
+			alert("You clicked me!");
+		});
+		
+		var room = 1;
+		window.onmousewheel=document.onmousewheel = function (e) {
+			console.log(e);
+			
+			if(e.wheelDelta < 0) {
+				room = (room + 0.1);
+				if(room > 5)
+					room = 5;
+			}
+			
+			if(e.wheelDelta > 0) {
+				room = (room - 0.1);
+				if(room < 0.5)
+					room = 0.5;
+			}
+			document.body.style.zoom=room;
+		};
+		
+	});
+	</script>
+	<style>
+		.div_s {
+			padding: 10px;
+		}
+		img {
+			width:100%;
+			height:auto;
+		}
+		body {
+			overflow-x:auto;
+			overflow-y:auto;
+		}
+	</style>
+</head>
+<body>
+	<div id="container" class="container" style="width:800px;border: 2px solid #cccccc"> <!-- div要有固定宽度（而不能是相对宽度，比如100%），才可能放大超过浏览器的宽度而出现滚动条，可以去掉width:800px 对比一下-->
+		<div class="row">
+			<div class="col-md-4 div_s">
+				<img  src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550747110359&di=7bd5d30c4b0b3860a0c0ea72e120e3f3&imgtype=0&src=http%3A%2F%2Fpic3.16pic.com%2F00%2F55%2F48%2F16pic_5548763_b.jpg"/>
+			</div>
+			<div class="col-md-4 div_s">
+				<img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550749424648&di=bf0c90f41e62d1c8a8e72774303ff0e6&imgtype=0&src=http%3A%2F%2Fscimg.jb51.net%2Fallimg%2F150715%2F14-150G510241N23.jpg"/>
+			</div>
+			<div class="col-md-4 div_s">
+				<img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1550750490405&di=629afb0bdf52ba9fcd61d4a6124e443e&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimage%2Fc0%253Dshijue1%252C0%252C0%252C294%252C40%2Fsign%3D6d544e2befdde711f3df4bb5cf86a46e%2F91ef76c6a7efce1b252036e4a551f3deb48f6591.jpg"/>
+			</div>
+			
+		</div>
+		
+		<div class="row">
+			<div class="col-md-4 div_s">
+				<input id="zoom" type="button" value="Zooming"></input>
+			</div>
+			<div class="col-md-4 div_s">
+				<input id="text" type="text" value="25"></input>
+			</div>
+		<div>
+		
+	</div>
+	
+</body>
+</html>
