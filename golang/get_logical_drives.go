@@ -1,8 +1,17 @@
-// find windows logical drives (drive letters), for both avaliable and occupied ones
+// func GetLogicalDrives() (occup []string, avail []string)
+//     :find windows logical drives (drive letters), for both avaliable and occupied ones
+//
+// func ShuffleSlice(slice interface{})
+//     :shuffle ANY slice (works for whatever the type of slice element is)
+
 package main
 
 import (
 	"fmt"
+	"math/rand"
+	"reflect"
+	"time"
+
 	"sort"
 	. "strconv"
 	"syscall"
@@ -43,8 +52,39 @@ func GetLogicalDrives() (occup []string, avail []string) {
 	return occupied, avaliable
 }
 
+func ShuffleSlice(slice interface{}) {
+	rv := reflect.ValueOf(slice)
+	if rv.Type().Kind() != reflect.Slice {
+		panic("Must be slice")
+	}
+
+	len := rv.Len()
+	if len < 2 {
+		return
+	}
+
+	swap := reflect.Swapper(slice)
+	rand.Seed(time.Now().Unix())
+	for i := len - 1; i >= 0; i-- {
+		j := rand.Intn(len)
+		swap(i, j)
+	}
+}
+
 func main() {
 	occupied, avaliable := GetLogicalDrives()
 	fmt.Printf("occupied  drives: %s\n", occupied)
 	fmt.Printf("avaliable drives: %s\n", avaliable)
+
+	/* 随机乱序 */
+	// ***** this works *****
+	// rand.Seed(time.Now().UnixNano())
+	// rand.Shuffle(len(avaliable), func(i, j int) {
+	// 	avaliable[i], avaliable[j] = avaliable[j], avaliable[i]
+	// })
+
+	// ***** this better *****
+	ShuffleSlice(avaliable)
+
+	fmt.Printf("Shuffle avaliable: %s\n", avaliable)
 }
