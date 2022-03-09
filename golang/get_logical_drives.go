@@ -64,7 +64,7 @@ func ShuffleSlice(slice interface{}) {
 	}
 
 	swap := reflect.Swapper(slice)
-	rand.Seed(time.Now().Unix())
+	rand.Seed(time.Now().UnixNano())
 	for i := len - 1; i >= 0; i-- {
 		j := rand.Intn(len)
 		swap(i, j)
@@ -72,6 +72,13 @@ func ShuffleSlice(slice interface{}) {
 }
 
 func main() {
+	for i := 0; i < 100; i++ {
+		time.Sleep(time.Millisecond * 13)
+		test()
+	}
+}
+
+func test() {
 	occupied, avaliable := GetLogicalDrives()
 	fmt.Printf("occupied  drives: %s\n", occupied)
 	fmt.Printf("avaliable drives: %s\n", avaliable)
