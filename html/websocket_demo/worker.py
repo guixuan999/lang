@@ -2,6 +2,7 @@ from sys import stdout, stderr, stdin
 from time import sleep
 import sys,os
 
+# for Environment variables, like REQUEST_URI below, refer to https://github.com/joewalnes/websocketd/wiki/Environment-variables
 stderr.write("Websocket requested URI: " + os.environ["REQUEST_URI"] + "\n")
 stderr.flush()
 
