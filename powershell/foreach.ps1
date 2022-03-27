@@ -89,3 +89,5 @@ switch($b) {
          Write-Host I am none...
     }
 }
+
+Write-Host All Done! -ForegroundColor Green
