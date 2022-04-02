@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	nested "github.com/antonfisher/nested-logrus-formatter"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/rifflock/lfshook"
 	log "github.com/sirupsen/logrus"
@@ -15,16 +16,16 @@ import (
 // refer to https://blog.csdn.net/sinat_38068807/article/details/106941878
 
 func main() {
-	log.New()
-	log.SetOutput(os.Stdout)
-
-	log.SetFormatter(&log.TextFormatter{DisableTimestamp: false, TimestampFormat: time.StampMilli})
-	log.SetLevel(log.DebugLevel)
-	log.AddHook(lineHook{Field: "src", Skip: 1})
-	log.AddHook(newLfsHook(2))
+	LOG := log.New()
+	LOG.SetOutput(os.Stdout)
+	LOG.SetFormatter(&nested.Formatter{HideKeys: true, FieldsOrder: []string{"component", "category"}, NoFieldsColors: true})
+	LOG.SetLevel(log.ErrorLevel)
+	LOG.AddHook(lineHook{Field: "src", Skip: 0})
+	LOG.AddHook(newLfsHook(2))
 	i := 0
 	for {
-		log.Errorf("[%d] This is %s", i, "Debug")
+		LOG.Panicf("[%d] This is %s", i, "Debug")
+		LOG.Infof("infoma\ntion\n")
 		i++
 		time.Sleep(time.Millisecond * 500)
 		if i > 200 {
@@ -100,19 +101,9 @@ func getCaller(skip int) (string, int, uintptr) {
 
 func newLfsHook(maxRemainCnt uint) log.Hook {
 	writer, err := rotatelogs.New(
-		"logName"+".%Y%m%d%H",
-		//"logName",
-		// WithLinkName为最新的日志建立软连接，以方便随着找到当前日志文件
+		"logName.%Y%m%d",
 		rotatelogs.WithLinkName("logName"),
-
-		// WithRotationTime设置日志分割的时间，这里设置为一小时分割一次
-		//rotatelogs.WithRotationTime(time.Hour),
 		rotatelogs.WithRotationSize(1024),
-
-		// WithMaxAge和WithRotationCount二者只能设置一个，
-		// WithMaxAge设置文件清理前的最长保存时间，
-		// WithRotationCount设置文件清理前最多保存的个数。
-		//rotatelogs.WithMaxAge(time.Hour*24),
 		rotatelogs.WithRotationCount(maxRemainCnt),
 	)
 
@@ -127,7 +118,7 @@ func newLfsHook(maxRemainCnt uint) log.Hook {
 		log.ErrorLevel: writer,
 		log.FatalLevel: writer,
 		log.PanicLevel: writer,
-	}, &log.TextFormatter{DisableColors: true})
+	}, &nested.Formatter{HideKeys: false, NoColors: true})
 
 	return lfsHook
 }
